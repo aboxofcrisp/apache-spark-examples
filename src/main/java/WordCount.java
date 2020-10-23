@@ -15,6 +15,15 @@ import java.util.Iterator;
 
 public class WordCount {
 
+  public static void studyRDD(JavaSparkContext sc){
+    // parallelize
+    JavaRDD<String> javaStringRDD = sc.parallelize(Arrays.asList("shenzhen", "is a beautiful city"),2);
+    // TextFile
+    JavaRDD<String> textFile = sc.textFile("testdata/shakespeare.txt",3);
+     System.out.println("TextFile:"+   textFile.collect().toString());
+  }
+
+
   public static void main(String[] args) throws Exception {
 
     FileUtils.deleteDirectory(new File("testdata/words_java.txt"));
@@ -24,6 +33,8 @@ public class WordCount {
         .setMaster("local[*]");
 
     JavaSparkContext sc = new JavaSparkContext(sparkConf);
+
+    studyRDD(sc);
 
     // open the text file as an RDD of String
     JavaRDD<String> textFile = sc.textFile("testdata/shakespeare.txt");
@@ -58,6 +69,8 @@ public class WordCount {
 
     counts.filter(tuple -> tuple._2() > 0 )
             .saveAsTextFile("testdata/words_java.txt");
+
+
 
   }
 
