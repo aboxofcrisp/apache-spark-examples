@@ -38,8 +38,11 @@ public class WordCount {
 
     // map each word to a tuple containing the word and the value 1
     JavaPairRDD<String, Integer> pairs = words.mapToPair(new PairFunction<String, String, Integer>() {
+      @Override
       public Tuple2<String, Integer> call(String word) { return new Tuple2<>(word, 1); }
     });
+
+    System.out.println(">>>>>>>>>>> first "+pairs.first().toString() );
 
     // for all tuples that have the same key (word), perform an aggregation to add the counts
     JavaPairRDD<String, Integer> counts = pairs.reduceByKey(new org.apache.spark.api.java.function.Function2<Integer, Integer, Integer>() {
@@ -48,9 +51,12 @@ public class WordCount {
         return a + b;
       }
     });
+    System.out.println(">>>>>>>>>>> counts "+counts.first().toString() );
+
 
     // perform some final transformations, and then save the output to a file
-    counts.filter(tuple -> tuple._2() > 100)
+
+    counts.filter(tuple -> tuple._2() > 0 )
             .saveAsTextFile("testdata/words_java.txt");
 
   }
